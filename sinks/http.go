@@ -127,7 +127,7 @@ func (h *HTTPSink) OnList(list *api_v1.EventList) {
 }
 
 func (h *HTTPSink) Run(stopCh <-chan struct{}) {
-	glog.Info("Starting Elasticsearch sink")
+	glog.Info("Starting HTTP sink")
 	for {
 		select {
 		case entry := <-h.logEntryChannel:
@@ -142,8 +142,8 @@ func (h *HTTPSink) Run(stopCh <-chan struct{}) {
 			h.flushBuffer()
 			break
 		case <-stopCh:
-			glog.Info("Elasticsearch sink recieved stop signal, waiting for all requests to finish")
-			glog.Info("All requests to Elasticsearch finished, exiting Elasticsearch sink")
+			glog.Info("HTTP sink recieved stop signal, waiting for all requests to finish")
+			glog.Info("All requests to HTTP finished, exiting HTTP sink")
 			return
 		}
 	}
@@ -156,7 +156,7 @@ func (h *HTTPSink) flushBuffer() {
 	go h.sendEntries(entries)
 }
 func (h *HTTPSink) sendEntries(entries []*api_v1.Event) {
-	glog.V(4).Infof("Sending %d entries to Elasticsearch", len(entries))
+	glog.V(4).Infof("Sending %d entries to HTTP endpoint", len(entries))
 
 	if err := doHttpRequest(h.config, entries); err != nil {
 		// TODO how to recovery?
@@ -167,7 +167,7 @@ func (h *HTTPSink) sendEntries(entries []*api_v1.Event) {
 
 	<-h.concurrencyChannel
 
-	glog.V(4).Infof("Successfully sent %d entries to Elasticsearch", len(entries))
+	glog.V(4).Infof("Successfully sent %d entries to HTTP endpoint", len(entries))
 }
 
 func (h *HTTPSink) setTimer() {
