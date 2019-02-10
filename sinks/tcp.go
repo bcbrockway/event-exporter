@@ -19,15 +19,15 @@ package sinks
 import (
 	"github.com/golang/glog"
 	api_v1 "k8s.io/api/core/v1"
-	"time"
 	"net"
+	"time"
 	//"encoding/json"
 	"fmt"
 )
 
 type TCPConf struct {
 	SinkCommonConf
-	Endpoint        *string
+	Endpoint *string
 }
 
 type TCPSink struct {
@@ -145,7 +145,7 @@ func (h *TCPSink) sendEntries(entries []*api_v1.Event) {
 		fmt.Errorf("Not a expected: %v.", err)
 		FailedSentEntryCount.Add(float64(len(entries)))
 	} else {
-		SuccessfullySentEntryCount.Add(float64(len(entries)))//
+		SuccessfullySentEntryCount.Add(float64(len(entries))) //
 	}
 
 	<-h.concurrencyChannel
@@ -182,7 +182,7 @@ func doTCPRequest(config *TCPConf, data interface{}) error {
 		return err
 	}
 	defer conn.Close()
-	
+
 	conn.Write(params.Bytes())
 	return nil
 }

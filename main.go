@@ -40,7 +40,7 @@ import (
 const (
 	sinkNameElasticSearch = "elasticsearch"
 	sinkNameHTTP          = "http"
-	sinkNameTCP		  = "tcp"
+	sinkNameTCP           = "tcp"
 )
 
 var (
