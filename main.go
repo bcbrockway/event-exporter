@@ -39,7 +39,6 @@ import (
 
 const (
 	sinkNameElasticSearch = "elasticsearch"
-	sinkNameKafka         = "kafka"
 	sinkNameHTTP          = "http"
 )
 
@@ -49,7 +48,7 @@ var (
 	resyncPeriod       = flag.Duration("resync-period", 1*time.Minute, "Reflector resync period")
 	prometheusEndpoint = flag.String("prometheus-endpoint", ":80", "Endpoint on which to "+
 		"expose Prometheus http handler")
-	sinkName              = flag.String("sink", sinkNameElasticSearch, "Sink type to save the exported events: elasticsearch/kafka/http")
+	sinkName              = flag.String("sink", sinkNameElasticSearch, "Sink type to save the exported events: elasticsearch/http")
 	elasticsearchEndpoint = flag.String("elasticsearch-server", "http://elasticsearch:9200/", "Elasticsearch endpoint")
 
 	// for http sink
