@@ -17,10 +17,13 @@ limitations under the License.
 package sinks
 
 import (
-	"github.com/golang/glog"
-	"gopkg.in/olivere/elastic.v3"
-	api_v1 "k8s.io/api/core/v1"
+	"context"
+	"encoding/json"
 	"time"
+
+	"github.com/golang/glog"
+	"github.com/olivere/elastic"
+	api_v1 "k8s.io/api/core/v1"
 )
 
 type ElasticSearchConf struct {
@@ -149,24 +152,33 @@ func (es *ElasticSearchSink) flushBuffer() {
 func (es *ElasticSearchSink) sendEntries(entries []*api_v1.Event) {
 	glog.V(4).Infof("Sending %d entries to Elasticsearch", len(entries))
 
-	bulkRequest := es.esClient.Bulk()
+	bulkRequest := es.esClient.Bulk().Index(eventsLogName)
 
 	for _, event := range entries {
 		glog.Infof("Orig obj: %v", event.InvolvedObject)
 		newIndex := elastic.NewBulkIndexRequest().Index(eventsLogName).Type(eventsLogName).Id(string(event.ObjectMeta.UID)).Doc(event)
+		glog.V(4).Infof("Index request on wire: %v", newIndex.String())
 		bulkRequest = bulkRequest.Add(newIndex)
 	}
 
-	_, err := bulkRequest.Do()
+	bulkResponse, err := bulkRequest.Do(context.TODO()) //TODO: investigate use of context here
+	b, _ := json.Marshal(bulkResponse)
 	if err != nil {
 		glog.Errorf("save events error: %v", err)
+		glog.Errorf("Response object: %v", string(b))
+	} else {
+		SuccessfullySentEntryCount.Add(float64(len(entries)))
+		glog.V(4).Infof("Successfully sent %d entries to Elasticsearch", len(entries))
+		glog.V(4).Infof("Response object: %v", string(b))
 	}
 
-	SuccessfullySentEntryCount.Add(float64(len(entries)))
-
+	failed := bulkResponse.Failed()
+	if len(failed) != 0 {
+		for _, item := range failed {
+			glog.Errorf(string(item.Error.Reason))
+		}
+	}
 	<-es.concurrencyChannel
-
-	glog.V(4).Infof("Successfully sent %d entries to Elasticsearch", len(entries))
 }
 
 func (es *ElasticSearchSink) setTimer() {
