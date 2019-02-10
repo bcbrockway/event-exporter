@@ -20,17 +20,19 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/golang/glog"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 	"time"
 
-	"github.com/golang/glog"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-
 	"k8s.io/client-go/kubernetes"
+	_ "k8s.io/client-go/plugin/pkg/client/auth/oidc"
 	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 
 	"github.com/nabadger/event-exporter/sinks"
 )
@@ -42,6 +44,8 @@ const (
 )
 
 var (
+	inCluster          = flag.Bool("incluster", false, "use in cluster configuration.")
+	kubeconfig         = flag.String("kubeconfig", filepath.Join(os.Getenv("HOME"), ".kube", "config"), "path to kubeconfig (if not in running inside a cluster)")
 	resyncPeriod       = flag.Duration("resync-period", 1*time.Minute, "Reflector resync period")
 	prometheusEndpoint = flag.String("prometheus-endpoint", ":80", "Endpoint on which to "+
 		"expose Prometheus http handler")
@@ -71,12 +75,19 @@ func newSystemStopChannel() chan struct{} {
 }
 
 func newKubernetesClient() (kubernetes.Interface, error) {
-	config, err := rest.InClusterConfig()
-	if err != nil {
-		return nil, fmt.Errorf("failed to create in-cluster config: %v", err)
+	var err error
+	var config *rest.Config
+	if *kubeconfig != "" && !*inCluster {
+		config, err = clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	} else {
+		config, err = rest.InClusterConfig()
 	}
 
-	return kubernetes.NewForConfig(config)
+	client, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create config: %v", err)
+	}
+	return client, err
 }
 
 func main() {
