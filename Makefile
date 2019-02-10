@@ -21,9 +21,9 @@ test:
 	go test -ldflags -s -v --cover ${UNITTEST_PACKAGES}
 
 image:
-	docker build -t liubin/event-exporter .
+	docker build -t nabadger/event-exporter .
 
 push:
-	docker push liubin/event-exporter
+	docker push nabadger/event-exporter
 
 docker: image push

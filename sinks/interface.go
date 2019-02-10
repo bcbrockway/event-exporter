@@ -18,7 +18,7 @@ limitations under the License.
 package sinks
 
 import (
-	"event-exporter/events"
+	"github.com/nabadger/event-exporter/events"
 	"github.com/prometheus/client_golang/prometheus"
 	api_v1 "k8s.io/api/core/v1"
 	"time"
