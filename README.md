@@ -81,7 +81,7 @@ spec:
         run: event-exporter
     spec:
       containers:
-      - image: liubin/event-exporter
+      - image: nabadger/event-exporter
         ports:
         - containerPort: 80 
         imagePullPolicy: Always
