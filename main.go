@@ -40,6 +40,7 @@ import (
 const (
 	sinkNameElasticSearch = "elasticsearch"
 	sinkNameHTTP          = "http"
+	sinkNameTCP		  = "tcp"
 )
 
 var (
@@ -57,6 +58,9 @@ var (
 	httpToken    = flag.String("token", "", "Token header and value for http token auth")
 	httpUsername = flag.String("username", "", "Username for http basic auth")
 	httpPassword = flag.String("password", "", "Nassword for http basic auth")
+
+	// for tcp sink
+	tcpEndpoint = flag.String("tcp-endpoint", "127.0.0.1:9000", "TCP endpoint")
 )
 
 func newSystemStopChannel() chan struct{} {
@@ -114,6 +118,13 @@ func main() {
 		outSink, err = sinks.NewHTTPSink(config)
 		if err != nil {
 			glog.Fatalf("Failed to initialize http output: %v", err)
+		}
+	} else if *sinkName == sinkNameTCP {
+		config := sinks.DefaultTCPConf()
+		config.Endpoint = tcpEndpoint
+		outSink, err = sinks.NewTCPSink(config)
+		if err != nil {
+			glog.Fatalf("Failed to initiaize tcp output: %v", err)
 		}
 	} else {
 		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
