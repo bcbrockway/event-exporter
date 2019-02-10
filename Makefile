@@ -11,7 +11,10 @@ fmt:
 vet:
 	go vet ${UNITTEST_PACKAGES}
 
-build:
+get:
+	go get
+
+build: get
 	go build -ldflags -s -v -o bin/event-exporter .
 
 run: build
@@ -19,6 +22,11 @@ run: build
 
 test:
 	go test -ldflags -s -v --cover ${UNITTEST_PACKAGES}
+
+clean:
+	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go clean
+	rm -rf ./bin
+	rm -rf ./vendor
 
 image:
 	docker build -t nabadger/event-exporter .
