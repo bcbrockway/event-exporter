@@ -1,6 +1,6 @@
 # Event-exporter
 
-Export Kubernetes' events to Elasticsearch/Kafka/HTTP Endpoint.
+Export Kubernetes' events to Elasticsearch/TCP/HTTP Endpoint.
 
 Inspired by https://github.com/GoogleCloudPlatform/k8s-stackdriver/tree/master/event-exporter .
 
@@ -22,7 +22,7 @@ Common options:
     -resync-period duration
         Reflector resync period (default 1m0s)
     -sink string
-        Sink name, now suported are Elasticsearch/Kafka/HTTP endpoint.
+        Sink name, now suported are Elasticsearch/TCP/HTTP endpoint.
     -sink-opts string
         Parameters for selected output sinks
     -flush-delay duration
