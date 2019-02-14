@@ -185,6 +185,7 @@ func doTCPRequest(config *TCPConf, entries []*api_v1.Event) error {
 			return err
 		}
 		conn.Write(params.Bytes())
+		conn.Write([]byte("\n"))
 	}
 
 	return nil
