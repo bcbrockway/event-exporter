@@ -34,7 +34,7 @@ import (
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 
-	"github.com/nabadger/event-exporter/sinks"
+	"github.com/mintel/event-exporter/sinks"
 )
 
 const (

@@ -8,7 +8,7 @@ import (
 	"k8s.io/apimachinery/pkg/watch"
 	"time"
 
-	"github.com/nabadger/event-exporter/events"
+	"github.com/mintel/event-exporter/events"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/cache"
 )

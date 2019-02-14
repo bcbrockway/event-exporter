@@ -81,7 +81,7 @@ spec:
         run: event-exporter
     spec:
       containers:
-      - image: nabadger/event-exporter
+      - image: mintel/event-exporter
         ports:
         - containerPort: 80 
         imagePullPolicy: Always

@@ -1,7 +1,9 @@
 
 GOFILES_NOVENDOR = $(shell find . -type f -name '*.go' -not -path "./vendor/*")
 UNITTEST_PACKAGES = $(shell go list ./... | grep -v /vendor/ | grep -v integration_test)
-
+IMG_REPO ?= mintel/event-exporter
+IMG_TAG ?= latest
+BIN ?= event-exporter
 
 all: fmt vet build
 
@@ -11,27 +13,19 @@ fmt:
 vet:
 	go vet ${UNITTEST_PACKAGES}
 
-get:
-	go get
-
-build: get
-	go build -ldflags -s -v -o bin/event-exporter .
+build:
+	go build -ldflags -s -v -o bin/${BIN} .
 
 run: build
-	bin/event-exporter
+	bin/${BIN}
 
 test:
 	go test -ldflags -s -v --cover ${UNITTEST_PACKAGES}
 
-clean:
-	@GOPATH=$(GOPATH) GOBIN=$(GOBIN) go clean
-	rm -rf ./bin
-	rm -rf ./vendor
-
 image:
-	docker build -t nabadger/event-exporter .
+	docker build -t ${IMG_REPO}:${IMG_TAG} .
 
 push:
-	docker push nabadger/event-exporter
+	docker push ${IMG_REPO}:${IMG_TAG}
 
 docker: image push
