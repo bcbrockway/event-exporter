@@ -53,7 +53,7 @@ var (
 
 const (
 	defaultFlushDelay     = 5 * time.Second
-	defaultMaxBufferSize  = 1000
+	defaultMaxBufferSize  = 1
 	defaultMaxConcurrency = 1
 
 	eventsLogName = "events"
