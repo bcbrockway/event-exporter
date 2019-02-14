@@ -176,11 +176,9 @@ func doTCPRequest(config *TCPConf, entries []*api_v1.Event) error {
 	}
 	defer conn.Close()
 
-
 	for _, data := range(entries) {
 		// Convert to json string
 		params, err := encodeData(data)
-		glog.Infof("Params %v", params.Bytes())
 		if err != nil	{
 			return err
 		}
