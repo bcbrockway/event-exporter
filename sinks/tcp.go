@@ -177,9 +177,9 @@ func doTCPRequest(config *TCPConf, entries []*api_v1.Event) error {
 	defer conn.Close()
 
 
-	for i, _ := range(entries) {
+	for _, data := range(entries) {
 		// Convert to json string
-		params, err := encodeData(i)
+		params, err := encodeData(data)
 		if err != nil	{
 			return err
 		}
