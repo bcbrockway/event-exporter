@@ -19,6 +19,16 @@ make build
 ./bin/event-exporter
 ```
 
+# Examples
+
+```
+# Use ncat to listen on a socket
+>> ncat -lk 9000
+
+# Use the tcp-sink (default 127.0.0.1:9000). Note, this also uses $HOME/.kube/config by default
+>> ./bin/event-exporter -v 10 -logtostderr -sink "tcp" -prometheus-endpoint ":8000"
+```
+
 # How to config
 
 ## Event exporter options:
