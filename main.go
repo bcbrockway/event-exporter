@@ -72,6 +72,7 @@ func newSystemStopChannel() chan struct{} {
 		glog.Infof("Recieved signal %s, terminating", sig.String())
 
 		ch <- struct{}{}
+		close(ch)
 	}()
 
 	return ch
