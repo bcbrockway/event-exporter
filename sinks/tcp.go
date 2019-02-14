@@ -168,14 +168,7 @@ func (h *TCPSink) getTimerChannel() <-chan time.Time {
 	return h.timer.C
 }
 
-func doTCPRequest(config *TCPConf, data interface{}) error {
-
-	// Convert to json string
-	params, err := encodeData(data)
-	if err != nil {
-		return err
-	}
-
+func doTCPRequest(config *TCPConf, entries []*api_v1.Event) error {
 	// Create req
 	conn, err := net.Dial("tcp", *config.Endpoint)
 	if err != nil {
@@ -183,6 +176,15 @@ func doTCPRequest(config *TCPConf, data interface{}) error {
 	}
 	defer conn.Close()
 
-	conn.Write(params.Bytes())
+
+	for i, _ := range(entries) {
+		// Convert to json string
+		params, err := encodeData(i)
+		if err != nil	{
+			return err
+		}
+		conn.Write(params.Bytes())
+	}
+
 	return nil
 }
