@@ -10,10 +10,11 @@ all: fmt vet build
 fmt:
 	gofmt -l -w ${GOFILES_NOVENDOR}
 
-vet:
-	go vet ${UNITTEST_PACKAGES}
+dep:
+	@which dep 2>/dev/null || $(GO) get github.com/golang/dep/cmd/dep
+	dep ensure
 
-build:
+build: dep
 	go build -ldflags -s -v -o bin/${BIN} .
 
 run: build
@@ -21,6 +22,7 @@ run: build
 
 test:
 	go test -ldflags -s -v --cover ${UNITTEST_PACKAGES}
+	go vet ${UNITTEST_PACKAGES}
 
 image:
 	docker build -t ${IMG_REPO}:${IMG_TAG} .
