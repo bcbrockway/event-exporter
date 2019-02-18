@@ -21,7 +21,6 @@ import (
 	api_v1 "k8s.io/api/core/v1"
 	"net"
 	"time"
-	//"encoding/json"
 	"fmt"
 )
 
@@ -69,7 +68,7 @@ func NewTCPSink(config *TCPConf) (*TCPSink, error) {
 
 func (h *TCPSink) OnAdd(event *api_v1.Event) {
 	ReceivedEntryCount.WithLabelValues(event.Source.Component).Inc()
-	glog.Infof("OnAdd %v", event)
+	glog.V(2).Infof("OnAdd %v", event)
 	h.logEntryChannel <- event
 }
 
@@ -88,7 +87,7 @@ func (h *TCPSink) OnUpdate(oldEvent *api_v1.Event, newEvent *api_v1.Event) {
 		glog.V(2).Infof("Event count has increased by %d != 1.\n"+
 			"\tOld event: %+v\n\tNew event: %+v", newEvent.Count-oldCount, oldEvent, newEvent)
 	}
-	glog.Infof("OnUpdate %v", newEvent)
+	glog.V(2).Infof("OnUpdate %v", newEvent)
 
 	ReceivedEntryCount.WithLabelValues(newEvent.Source.Component).Inc()
 
@@ -101,7 +100,7 @@ func (h *TCPSink) OnDelete(*api_v1.Event) {
 
 func (h *TCPSink) OnList(list *api_v1.EventList) {
 	// Nothing to do else
-	glog.Infof("OnList %v", list)
+	glog.V(2).Infof("OnList %v", list)
 	if h.beforeFirstList {
 		h.beforeFirstList = false
 	}

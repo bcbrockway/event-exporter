@@ -88,7 +88,7 @@ func NewHTTPSink(config *HTTPConf) (*HTTPSink, error) {
 
 func (h *HTTPSink) OnAdd(event *api_v1.Event) {
 	ReceivedEntryCount.WithLabelValues(event.Source.Component).Inc()
-	glog.Infof("OnAdd %v", event)
+	glog.V(2).Infof("OnAdd %v", event)
 	h.logEntryChannel <- event
 }
 
@@ -107,7 +107,7 @@ func (h *HTTPSink) OnUpdate(oldEvent *api_v1.Event, newEvent *api_v1.Event) {
 		glog.V(2).Infof("Event count has increased by %d != 1.\n"+
 			"\tOld event: %+v\n\tNew event: %+v", newEvent.Count-oldCount, oldEvent, newEvent)
 	}
-	glog.Infof("OnUpdate %v", newEvent)
+	glog.V(2).Infof("OnUpdate %v", newEvent)
 
 	ReceivedEntryCount.WithLabelValues(newEvent.Source.Component).Inc()
 
@@ -120,7 +120,7 @@ func (h *HTTPSink) OnDelete(*api_v1.Event) {
 
 func (h *HTTPSink) OnList(list *api_v1.EventList) {
 	// Nothing to do else
-	glog.Infof("OnList %v", list)
+	glog.V(2).Infof("OnList %v", list)
 	if h.beforeFirstList {
 		h.beforeFirstList = false
 	}

@@ -53,16 +53,16 @@ type EventWatcherConfig struct {
 func NewEventWatcher(client kubernetes.Interface, config *EventWatcherConfig) Watcher {
 	listerWatcher := &cache.ListWatch{
 		ListFunc: func(options meta_v1.ListOptions) (runtime.Object, error) {
-			glog.Infof("ListFunc %v", options)
+			glog.V(2).Infof("ListFunc %v", options)
 			list, err := client.CoreV1().Events(meta_v1.NamespaceAll).List(options)
-			glog.Infof("got list %v", list)
+			glog.V(2).Infof("got list %v", list)
 			if err == nil {
 				config.OnList(list)
 			}
 			return list, err
 		},
 		WatchFunc: func(options meta_v1.ListOptions) (watch.Interface, error) {
-			glog.Infof("WatchFunc %v", options)
+			glog.V(2).Infof("WatchFunc %v", options)
 			return client.CoreV1().Events(meta_v1.NamespaceAll).Watch(options)
 		},
 	}

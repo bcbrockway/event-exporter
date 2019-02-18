@@ -66,7 +66,7 @@ func NewElasticSearchSink(config *ElasticSearchConf) (*ElasticSearchSink, error)
 		return nil, err
 	}
 
-	glog.Infof("NewElasticSearchOut inited.")
+	glog.V(2).Infof("NewElasticSearchOut inited.")
 
 	return &ElasticSearchSink{
 		esClient:           esClient,
@@ -82,7 +82,7 @@ func NewElasticSearchSink(config *ElasticSearchConf) (*ElasticSearchSink, error)
 
 func (es *ElasticSearchSink) OnAdd(event *api_v1.Event) {
 	ReceivedEntryCount.WithLabelValues(event.Source.Component).Inc()
-	glog.Infof("OnAdd %v", event)
+	glog.V(2).Infof("OnAdd %v", event)
 	es.logEntryChannel <- event
 }
 
@@ -101,7 +101,7 @@ func (es *ElasticSearchSink) OnUpdate(oldEvent *api_v1.Event, newEvent *api_v1.E
 		glog.V(2).Infof("Event count has increased by %d != 1.\n"+
 			"\tOld event: %+v\n\tNew event: %+v", newEvent.Count-oldCount, oldEvent, newEvent)
 	}
-	glog.Infof("OnUpdate %v", newEvent)
+	glog.V(2).Infof("OnUpdate %v", newEvent)
 
 	ReceivedEntryCount.WithLabelValues(newEvent.Source.Component).Inc()
 
@@ -114,7 +114,7 @@ func (es *ElasticSearchSink) OnDelete(*api_v1.Event) {
 
 func (es *ElasticSearchSink) OnList(list *api_v1.EventList) {
 	// Nothing to do else
-	glog.Infof("OnList %v", list)
+	glog.V(2).Infof("OnList %v", list)
 	if es.beforeFirstList {
 		es.beforeFirstList = false
 	}
@@ -155,7 +155,7 @@ func (es *ElasticSearchSink) sendEntries(entries []*api_v1.Event) {
 	bulkRequest := es.esClient.Bulk().Index(eventsLogName)
 
 	for _, event := range entries {
-		glog.Infof("Orig obj: %v", event.InvolvedObject)
+		glog.V(2).Infof("Orig obj: %v", event.InvolvedObject)
 		newIndex := elastic.NewBulkIndexRequest().Index(eventsLogName).Type(eventsLogName).Id(string(event.ObjectMeta.UID)).Doc(event)
 		glog.V(4).Infof("Index request on wire: %v", newIndex.String())
 		bulkRequest = bulkRequest.Add(newIndex)
