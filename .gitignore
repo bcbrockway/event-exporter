@@ -1,3 +1,4 @@
 .idea
 bin/
-event-exporter.iml
+vendor/
+
